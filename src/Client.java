@@ -32,10 +32,11 @@ public class Client {
 		mChar = 'a';
 		mNumeric = 0;
 
-		while(!(mRecievedData = mSocketIn.readLine()).contains("LOGOUT")) {
+		mRecievedData = mSocketIn.readLine();
+		System.out.println(mRecievedData);
+		
+		while(true) {
 			
-			System.out.println(mRecievedData);
-
 			mCommand = in.nextLine();
 			sendCommand(mCommand);
 
@@ -48,7 +49,8 @@ public class Client {
 			mResponseArchive.add(mResponse);
 			mResponse.showResponse();
 			
-			
+			if(mRecievedData.contains("LOGOUT"))
+				break;
 
 		}
 
