@@ -19,7 +19,7 @@ public class Client {
 	private Scanner in;
 	private Response mResponse;
 	private ArrayList<Response> mResponseArchive;
-	private String mToken="none";
+	private String mToken="Nil";
 	
 	public Client() throws Exception {
 		mSocket = new Socket("localhost", 2015);
@@ -59,7 +59,7 @@ public class Client {
 				mResponse.addResponse(mRecievedData);
 				mResponseArchive.add(mResponse);
 				mResponse.showResponse();
-				mToken="none";
+				mToken="Nil";
 				
 			}
 			
