@@ -76,6 +76,12 @@ public class Client {
 		String numString = String.format("%03d", n);
 		mTag = new String("" + mChar + numString);
 		mNumeric++;
+
+		if(mNumeric>999){
+			mChar++;
+			mNumeric=0;
+		}
+		
 	}
 
 	private boolean parseResponse(String response) {
