@@ -19,7 +19,8 @@ public class Client {
 	private Scanner in;
 	private Response mResponse;
 	private ArrayList<Response> mResponseArchive;
-
+	//private String mToken;
+	
 	public Client() throws Exception {
 		mSocket = new Socket("localhost", 2015);
 
@@ -49,6 +50,11 @@ public class Client {
 			mResponseArchive.add(mResponse);
 			mResponse.showResponse();
 			
+			if(mRecievedData.equals("+")){
+				mCommand=in.nextLine();
+				fillCommand(mCommand);
+			}
+			
 			if(mRecievedData.contains("LOGOUT"))
 				break;
 
@@ -71,6 +77,10 @@ public class Client {
 		makeTag(mChar, mNumeric);
 		mSocketOut.println(mConst + mTag + " " + command.toUpperCase());
 	}
+	
+	private void fillCommand(String command){
+		mSocketOut.println(mConst+command);
+	}
 
 	private void makeTag(char c, int n) {
 		String numString = String.format("%03d", n);
@@ -89,8 +99,14 @@ public class Client {
 		Scanner temp = new Scanner(response);
 		temp.next();
 		mTagResponse = temp.next();
-		if (mTagResponse.length() != 4)
+		if (mTagResponse.length() != 4){
+			if(mTagResponse.equals("+")){
+				//mToken=mTagResponse;
+				return true;
+			}
+			
 			return false;
+		}
 		mStringResponse = temp.next();
 		return true;
 
