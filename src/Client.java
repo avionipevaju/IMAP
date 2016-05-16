@@ -16,7 +16,7 @@ public class Client {
 	
 
 	public Client() throws Exception {
-		mSocket =new Socket("localhost", 143);
+		mSocket =new Socket("localhost", 2015);
 		
 		mSocketIn=new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
 		mSocketOut=new PrintWriter(new OutputStreamWriter(mSocket.getOutputStream()),true);
@@ -26,7 +26,8 @@ public class Client {
 		
 		System.out.println(mSocketIn.readLine());
 		sendCommand("CAPABILITY");
-		
+	
+		mSocket.close();
 		
 	}
 
