@@ -20,6 +20,7 @@ public class Server {
 	private int mNOOPCount = 1;
 	private final String mUsername = "Pavle";
 	private final String mPassword = "Nikola";
+	private State mCurrentState;
 	
 	public Server() throws Exception {
 		mMailboxes = new ArrayList<>();
@@ -28,6 +29,8 @@ public class Server {
 		
 		mInput = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
 		mOutput = new PrintWriter(new OutputStreamWriter(mSocket.getOutputStream()),true);
+		
+		mCurrentState = State.Not_Authenticated;
 		
 		//Not Authenticated State
 		//AUTHENTICATE, LOGIN, STARTTLS valid commands
@@ -130,6 +133,12 @@ public class Server {
 			break;
 
 		case "AUTHENTICATE" :
+			if (mCurrentState != State.Not_Authenticated) {
+				mMessage = mConst.concat(mTag.concat(" BAD unknown command"));
+				System.out.println(mMessage);
+				mOutput.println(mMessage);
+				return ;
+			}
 			if (mData.contains("PLAIN")) {
 				mMessage = mConst.concat("+");
 				System.out.println(mMessage);
@@ -138,12 +147,13 @@ public class Server {
 				mMessage = mInput.readLine();
 				mData = mMessage.substring(3, mMessage.length());
 				if (checkLogIn(mData)) {
-					mMessage = mConst.concat("OK PLAIN authentication successful");
+					mMessage = mConst.concat(mTag.concat(" OK PLAIN authentication successful"));
+					mCurrentState = State.Authenticated;
 					System.out.println(mMessage);
 					mOutput.println(mMessage);
 				}
 				else {
-					mMessage = mConst.concat("NO PLAIN authentication rejected");
+					mMessage = mConst.concat(mTag.concat(" NO PLAIN authentication rejected"));
 					System.out.println(mMessage);
 					mOutput.println(mMessage);
 				}
@@ -157,9 +167,35 @@ public class Server {
 			break;
 			
 		case "LOGIN" :
+			if (mCurrentState != State.Not_Authenticated) {
+				mMessage = mConst.concat(mTag.concat(" BAD unknown command"));
+				System.out.println(mMessage);
+				mOutput.println(mMessage);
+				return ;
+			}
+			if (checkLogIn(mData)) {
+				mMessage = mConst.concat(mTag.concat(" OK LOGIN completed"));
+				mCurrentState = State.Authenticated;
+				System.out.println(mMessage);
+				mOutput.println(mMessage);
+			}
+			else {
+				mMessage = mConst.concat(mTag.concat(" NO LOGIN username or password rejected"));
+				System.out.println(mMessage);
+				mOutput.println(mMessage);
+			}
+
 			break;
 
 		case "SELECT" :
+			if (mCurrentState != State.Authenticated) {
+				mMessage = mConst.concat(mTag.concat("BAD unknown command"));
+				System.out.println(mMessage);
+				mOutput.println(mMessage);
+				return ;
+			}
+			
+
 			break;
 			
 		case "EXAMINE" :
