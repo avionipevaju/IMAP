@@ -37,8 +37,9 @@ public class Server {
 		System.out.println(mMessage);
 		
 		parseCommand();
+		System.out.println("Command = " + mCommand);
 		
-		while (!mCommand.equalsIgnoreCase("LOGOUT")); {
+		while (!mCommand.equalsIgnoreCase("LOGOUT")) {
 			doCommand();
 			
 			mMessage = mInput.readLine();
@@ -83,6 +84,7 @@ public class Server {
 	}
 	
 	public void doCommand() {
+		System.out.println("Tu sam DOCOMMAND");
 		
 		switch(mCommand) {
 		
@@ -99,7 +101,6 @@ public class Server {
 			break;
 			
 		case "NOOP" :
-			
 			if (mNOOPCount == 3) {
 				//TODO kad se implementira mailbox srediti
 				

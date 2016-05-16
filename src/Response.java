@@ -23,7 +23,7 @@ public class Response {
 				System.out.println(mResponses.get(i));
 			}
 		}
-		System.out.println(mResponses.size() - 1);
+		System.out.println(mResponses.get(mResponses.size() - 1));
 	}
 
 }
