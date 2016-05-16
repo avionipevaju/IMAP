@@ -19,7 +19,7 @@ public class Client {
 	private Scanner in;
 	private Response mResponse;
 	private ArrayList<Response> mResponseArchive;
-	//private String mToken;
+	private String mToken="none";
 	
 	public Client() throws Exception {
 		mSocket = new Socket("localhost", 2015);
@@ -50,9 +50,17 @@ public class Client {
 			mResponseArchive.add(mResponse);
 			mResponse.showResponse();
 			
-			if(mRecievedData.equals("+")){
+			if(mToken.equals("+")){
 				mCommand=in.nextLine();
 				fillCommand(mCommand);
+				
+				mRecievedData=mSocketIn.readLine();
+				mResponse=new Response();
+				mResponse.addResponse(mRecievedData);
+				mResponseArchive.add(mResponse);
+				mResponse.showResponse();
+				mToken="none";
+				
 			}
 			
 			if(mRecievedData.contains("LOGOUT"))
@@ -101,7 +109,7 @@ public class Client {
 		mTagResponse = temp.next();
 		if (mTagResponse.length() != 4){
 			if(mTagResponse.equals("+")){
-				//mToken=mTagResponse;
+				mToken=mTagResponse;
 				return true;
 			}
 			
