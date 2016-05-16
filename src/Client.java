@@ -3,40 +3,57 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client {
-	
+
 	private Socket mSocket;
 	private BufferedReader mSocketIn;
 	private PrintWriter mSocketOut;
 	private String mTag;
 	private char mChar;
 	private int mNumeric;
-	private final String mConst="C: ";
-	private String mCommand,mRecievedData;
+	private final String mConst = "C: ";
+	private String mCommand, mRecievedData, mStringResponse, mTagResponse;
 	private Scanner in;
-	
+	private Response mResponse;
+	private ArrayList<Response> mResponseArchive;
 
 	public Client() throws Exception {
-		mSocket =new Socket("localhost", 2015);
-		
-		mSocketIn=new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
-		mSocketOut=new PrintWriter(new OutputStreamWriter(mSocket.getOutputStream()),true);
-		
-		in=new Scanner(System.in);
-		
-		mChar='a';
-		mNumeric=0;
-		
-		mRecievedData=mSocketIn.readLine();
-		System.out.println(mRecievedData);
-		
-		mCommand=in.nextLine().toUpperCase();
-		sendCommand(mCommand);
-	
+		mSocket = new Socket("localhost", 2015);
+
+		mSocketIn = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
+		mSocketOut = new PrintWriter(new OutputStreamWriter(mSocket.getOutputStream()), true);
+
+		in = new Scanner(System.in);
+		mResponseArchive=new ArrayList<>();
+
+		mChar = 'a';
+		mNumeric = 0;
+
+		while(!(mRecievedData = mSocketIn.readLine()).contains("LOGOUT")) {
+			
+			System.out.println(mRecievedData);
+
+			mCommand = in.nextLine();
+			sendCommand(mCommand);
+
+			mResponse=new Response();
+			
+			while(!parseResponse(mRecievedData = mSocketIn.readLine())){
+				mResponse.addResponse(mRecievedData);
+			}
+			mResponse.addResponse(mRecievedData);
+			mResponseArchive.add(mResponse);
+			mResponse.showResponse();
+			
+			
+
+		}
+
 		mSocket.close();
-		
+
 	}
 
 	public static void main(String[] args) {
@@ -47,17 +64,28 @@ public class Client {
 		}
 
 	}
-	
-	private void sendCommand(String command){
+
+	private void sendCommand(String command) {
 		makeTag(mChar, mNumeric);
-		mSocketOut.println(mConst+mTag+" "+command);
-		//System.out.println(mConst+mTag+" "+command);
+		mSocketOut.println(mConst + mTag + " " + command.toUpperCase());
 	}
-	
-	private void makeTag(char c, int n){
-		String numString=String.format("%03d",n);
-		mTag=new String(""+mChar+numString);
+
+	private void makeTag(char c, int n) {
+		String numString = String.format("%03d", n);
+		mTag = new String("" + mChar + numString);
 		mNumeric++;
 	}
 
+	private boolean parseResponse(String response) {
+
+		Scanner temp = new Scanner(response);
+		temp.next();
+		mTagResponse = temp.next();
+		if (mTagResponse.length() != 4)
+			return false;
+		mStringResponse = temp.next();
+		return true;
+
+	}
+	
 }
