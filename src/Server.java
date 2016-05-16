@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Server {
 	
@@ -17,6 +18,8 @@ public class Server {
 	private final String mConst = "S: ";
 	private String mMessage, mCommand, mTag, mData;
 	private int mNOOPCount = 1;
+	private final String mUsername = "Pavle";
+	private final String mPassword = "Nikola";
 	
 	public Server() throws Exception {
 		mMailboxes = new ArrayList<>();
@@ -37,7 +40,6 @@ public class Server {
 		System.out.println(mMessage);
 		
 		parseCommand();
-		System.out.println("Command = " + mCommand);
 		
 		while (!mCommand.equalsIgnoreCase("LOGOUT")) {
 			doCommand();
@@ -83,13 +85,11 @@ public class Server {
 		}
 	}
 	
-	public void doCommand() {
-		System.out.println("Tu sam DOCOMMAND");
+	public void doCommand() throws Exception {
 		
 		switch(mCommand) {
 		
 		case "CAPABILITY" :
-			
 			mMessage = mConst.concat("* CAPABILITY IMAP AUTH=PLAIN");
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
@@ -115,7 +115,6 @@ public class Server {
 			break;
 		
 		case "LOGOUT" :
-			
 			mMessage = mConst.concat("* BYE IMAP Server logging out");
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
@@ -127,9 +126,34 @@ public class Server {
 			break;
 
 		case "STARTTLS" :
+			//TODO na kraju
 			break;
 
 		case "AUTHENTICATE" :
+			if (mData.contains("PLAIN")) {
+				mMessage = mConst.concat("+");
+				System.out.println(mMessage);
+				mOutput.println(mMessage);
+				
+				mMessage = mInput.readLine();
+				mData = mMessage.substring(3, mMessage.length());
+				if (checkLogIn(mData)) {
+					mMessage = mConst.concat("OK PLAIN authentication successful");
+					System.out.println(mMessage);
+					mOutput.println(mMessage);
+				}
+				else {
+					mMessage = mConst.concat("NO PLAIN authentication rejected");
+					System.out.println(mMessage);
+					mOutput.println(mMessage);
+				}
+
+			}
+			else {
+				mMessage = mConst.concat(mTag.concat(" NO " + mData + " unsupported authentication mechanism"));
+				System.out.println(mMessage);
+				mOutput.println(mMessage);
+			}
 			break;
 			
 		case "LOGIN" :
@@ -197,6 +221,21 @@ public class Server {
 		
 		}
 		
+	}
+	
+	private boolean checkLogIn(String data) {
+		String username, password;
+		
+		Scanner temp = new Scanner(data);
+		username = temp.next();
+		password = temp.next();
+		System.out.println(username);
+		System.out.println(password);
+		
+		if (mUsername.equalsIgnoreCase(username) && mPassword.equalsIgnoreCase(password))
+			return true;
+
+		return false;
 	}
 
 
