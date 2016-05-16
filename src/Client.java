@@ -3,6 +3,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
 	
@@ -13,6 +14,8 @@ public class Client {
 	private char mChar;
 	private int mNumeric;
 	private final String mConst="C: ";
+	private String mCommand,mRecievedData;
+	private Scanner in;
 	
 
 	public Client() throws Exception {
@@ -21,11 +24,16 @@ public class Client {
 		mSocketIn=new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
 		mSocketOut=new PrintWriter(new OutputStreamWriter(mSocket.getOutputStream()),true);
 		
+		in=new Scanner(System.in);
+		
 		mChar='a';
 		mNumeric=0;
 		
-		System.out.println(mSocketIn.readLine());
-		sendCommand("CAPABILITY");
+		mRecievedData=mSocketIn.readLine();
+		System.out.println(mRecievedData);
+		
+		mCommand=in.nextLine().toUpperCase();
+		sendCommand(mCommand);
 	
 		mSocket.close();
 		
