@@ -69,4 +69,13 @@ public class Mailbox {
 		return mPermanentFlags.toString();
 	}
 	
+	public void addMessage(Message message){
+		mMessages.add(message);
+	}
+
+	public ArrayList<Message> getMessages() {
+		return mMessages;
+	}
+	
+	
 }
