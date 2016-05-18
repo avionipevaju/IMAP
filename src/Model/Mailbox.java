@@ -27,6 +27,7 @@ public class Mailbox {
 	private void read() {
 		
 		Properties properties=new Properties();
+		properties.put("mail.imap.port", "993");
 		properties.setProperty("mail.store.protocol", "imaps");
 		
 		try {
