@@ -1,3 +1,4 @@
+package OldIMAP;
 
 public enum Flag {
 	

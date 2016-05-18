@@ -1,3 +1,4 @@
+package OldIMAP;
 import java.util.ArrayList;
 
 import javax.swing.text.AttributeSet.CharacterAttribute;
