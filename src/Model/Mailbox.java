@@ -28,6 +28,7 @@ public class Mailbox {
 		
 		Properties properties=new Properties();
 		properties.put("mail.imap.port", "993");
+		properties.put("mail.imaps.ssl.trust", "*");
 		properties.setProperty("mail.store.protocol", "imaps");
 		
 		try {
@@ -51,6 +52,7 @@ public class Mailbox {
 //            System.out.println("SUBJECT:" + msg.getSubject());
 //            System.out.println("CONTENT:" + bp.getContent());
         } catch (Exception mex) {
+        	mex.printStackTrace();
         	JOptionPane.showMessageDialog(null, "LOGIN FAILED");
         	System.exit(1);
         }
