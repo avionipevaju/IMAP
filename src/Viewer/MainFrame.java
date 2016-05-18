@@ -66,15 +66,16 @@ public class MainFrame extends JFrame {
 		Folder deleted=mail.getTrash();
 	
 		DefaultListModel<String> mailModel=new DefaultListModel<>();
-		
+		int k = 0;
 		try {
 			inbox.open(Folder.READ_ONLY);
+			k = inbox.getMessageCount();
 		} catch (MessagingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
-		for(int i=0;i<10;i++){
+		for(int i=0;i<k;i++){
 		Message msg=null;
 		String temp=" ";
 		try {
