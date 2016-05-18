@@ -1,8 +1,10 @@
-package Viewer;
+package Model;
 
 import javax.swing.SwingUtilities;
 
-public class Main {
+import Viewer.LoginScreen;
+
+public class Client {
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
