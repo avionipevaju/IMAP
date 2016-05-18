@@ -15,14 +15,19 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import Model.Client;
+
 public class LoginScreen extends JDialog {
 
 	private JLabel mUserLabel, mPassLabel;
 	private JTextField mUserField;
 	private JPasswordField mPassField;
 	private JButton mLoginBtn, mExitBtn;
+	private Client mModel;
 
-	public LoginScreen() {
+	public LoginScreen(Client client) {
+		
+		mModel=client;
 		
 		try {
 			//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -37,12 +42,12 @@ public class LoginScreen extends JDialog {
 		setResizable(false);
 		setLayout(new GridLayout(3, 1));
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
 		initComponents();
 
 		pack();
 		setLocationRelativeTo(null);
 		setModalityType(ModalityType.APPLICATION_MODAL);
+		setModal(true);
 		setVisible(true);
 
 	}
@@ -68,7 +73,9 @@ public class LoginScreen extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.exit(1);
+				mModel.setFlag(false);
+				dispose();
+				//System.exit(1);
 
 			}
 		});
@@ -77,16 +84,10 @@ public class LoginScreen extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-	
-				SwingUtilities.invokeLater(new Runnable() {
-					
-					@Override
-					public void run() {
-						new MainFrame(mUserField.getText(),String.valueOf(mPassField.getPassword()));
-						
-					}
-				});
 				
+				mModel.setUser(mUserField.getText());
+				mModel.setPass(String.valueOf(mPassField.getPassword()));
+				mModel.setFlag(true);
 				dispose();
 
 			}

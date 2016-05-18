@@ -23,7 +23,7 @@ public class Client {
 	private String mToken="Nil";
 	
 	public Client() throws Exception {
-		mSocket = new Socket("localhost", 2015);
+		mSocket = new Socket("localhost", 1992);
 
 		mSocketIn = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
 		mSocketOut = new PrintWriter(new OutputStreamWriter(mSocket.getOutputStream()), true);
