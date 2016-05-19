@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -30,8 +31,8 @@ public class Server {
 	private Mailbox mMailBox;
 	private Folder mCurrentFolder = null;
 	private State mCurrentState;
+	private boolean mLoggedIn = false;
 
-	
 	public Server() throws Exception {
 		mServerSocket = new ServerSocket(1992); //143
 		mSocket = mServerSocket.accept();
@@ -112,13 +113,20 @@ public class Server {
 		
 		switch (mCommand) {
 		case "LOGIN":
-			if (checkLogIn()) {
+			Scanner temp = new Scanner(mData);
+			String user = temp.next();
+			String pass = temp.next();
+			System.out.println("User " + user);
+			System.out.println("Pass " + pass);
+			
+			mMailBox = new Mailbox(user.trim(), pass.trim(), this);
+			if (mLoggedIn) {
 				mMessage = mConst.concat(mTag.concat(" OK LOGIN completed"));
 				System.out.println(mMessage);
 				mOutput.println(mMessage);
 				//Sad ulazi u Authenticated State
 				mCurrentState = State.Authenticated;
-				mMailBox = new Mailbox(mUser, mPass);
+				
 			}
 			else {
 				mMessage = mConst.concat(mTag.concat(" NO LOGIN username or password rejected"));
@@ -313,6 +321,13 @@ public class Server {
 	            sendBody(mp.getBodyPart(i));
 	      }  
 
+	}
+	public boolean isLoggedIn() {
+		return mLoggedIn;
+	}
+
+	public void setLoggedIn(boolean mLoggedIn) {
+		this.mLoggedIn = mLoggedIn;
 	}
 
 

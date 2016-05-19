@@ -13,11 +13,21 @@ public class Mailbox {
 
 	private String mUser, mPass;
 	private Folder mInbox, mSent, mTrash;
+	private Server mServer = null;
 
 	public Mailbox(String user, String pass) {
 		mUser = user;
 		mPass = pass;
 		read();
+	}
+	
+	public Mailbox(String user, String pass, Server server) {
+		mUser = user;
+		mPass = pass;
+		mServer = server;
+		read();
+		
+
 	}
 
 	private void read() {
@@ -34,12 +44,17 @@ public class Mailbox {
 			mInbox = store.getFolder("INBOX");
 			mSent = store.getFolder("SENT");
 			mTrash = store.getFolder("DELETED");
+			if (mServer != null)
+				mServer.setLoggedIn(true);
 
 		} catch (Exception mex) {
-			// mex.printStackTrace();
+			System.out.println(mServer.isLoggedIn());
+			if (mServer != null)
+				mServer.setLoggedIn(false);
 			JOptionPane.showMessageDialog(null, "LOGIN FAILED");
-			// System.exit(1);
+			
 		}
+		
 
 	}
 
