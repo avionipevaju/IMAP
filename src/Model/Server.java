@@ -12,6 +12,7 @@ import java.net.Socket;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 
@@ -170,7 +171,10 @@ public class Server {
 				mMessage = mConst.concat("* " + numOfMessage + " FETCH FULL");
 				System.out.println(mMessage);
 				mOutput.println(mMessage);
-
+				//Header
+				sendHeader(msg);
+				//Body
+				sendBody(msg);
 				
 			}else
 				if (mData.contains("BODY")) {
@@ -181,87 +185,16 @@ public class Server {
 					
 					//Body
 					sendBody(msg);
-					
 				}else
 					if (mData.contains("HEADER")) {
-						//samo header
 						mMessage = mConst.concat("* " + numOfMessage + " FETCH HEADER");
 						System.out.println(mMessage);
 						mOutput.println(mMessage);
 						
-						//Date
-						if (msg.getSentDate() == null) {
-							mMessage = mConst.concat("Date: null");
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						else {
-							mMessage = mConst.concat("Date: " + msg.getSentDate().toString());
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						
-						//From
-						if (msg.getFrom() == null) {
-							mMessage = mConst.concat("From: null");
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						else {
-							mMessage = mConst.concat("From: " + msg.getFrom().toString());
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						
-						//Subject
-						if (msg.getSubject() == null) {
-							mMessage = mConst.concat("Subject: null");
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						else {
-							mMessage = mConst.concat("Subject: " + msg.getSubject());
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						
-						//To
-						if (msg.getRecipients(RecipientType.TO) == null) {
-							mMessage = mConst.concat("To: null");
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						else {
-							mMessage = mConst.concat("To: " + msg.getRecipients(RecipientType.TO).toString());
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						
-						//Cc
-						if (msg.getRecipients(RecipientType.CC) == null) {
-							mMessage = mConst.concat("Cc: null");
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						else {
-							mMessage = mConst.concat("Cc: " + msg.getRecipients(RecipientType.CC).toString());
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						
-						//Content type
-						if (msg.getContentType() == null) {
-							mMessage = mConst.concat("Content-Type: null");
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-						else {
-							mMessage = mConst.concat("Content-Type: " + msg.getContentType().toString());
-							System.out.println(mMessage);
-							mOutput.println(mMessage);
-						}
-
+						//Header
+						sendHeader(msg);
 					}
+			
 			mMessage = mConst.concat(mTag.concat(" OK FETCH completed"));
 			System.out.println(mMessage);
 			mOutput.println(mMessage);	
@@ -275,6 +208,83 @@ public class Server {
 			
 			break;
 		}
+	}
+	
+	private void sendHeader(Message msg) throws Exception {
+		
+		//Date
+		if (msg.getSentDate() == null) {
+			mMessage = mConst.concat("Date: null");
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		else {
+			mMessage = mConst.concat("Date: " + msg.getSentDate().toString());
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		
+		//From
+		if (msg.getFrom() == null) {
+			mMessage = mConst.concat("From: null");
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		else {
+			mMessage = mConst.concat("From: " + msg.getFrom().toString());
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		
+		//Subject
+		if (msg.getSubject() == null) {
+			mMessage = mConst.concat("Subject: null");
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		else {
+			mMessage = mConst.concat("Subject: " + msg.getSubject());
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		
+		//To
+		if (msg.getRecipients(RecipientType.TO) == null) {
+			mMessage = mConst.concat("To: null");
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		else {
+			mMessage = mConst.concat("To: " + msg.getRecipients(RecipientType.TO).toString());
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		
+		//Cc
+		if (msg.getRecipients(RecipientType.CC) == null) {
+			mMessage = mConst.concat("Cc: null");
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		else {
+			mMessage = mConst.concat("Cc: " + msg.getRecipients(RecipientType.CC).toString());
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		
+		//Content type
+		if (msg.getContentType() == null) {
+			mMessage = mConst.concat("Content-Type: null");
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+		else {
+			mMessage = mConst.concat("Content-Type: " + msg.getContentType().toString());
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
+
+		
 	}
 	
 	private void sendBody(Part msg) throws Exception, IOException {
