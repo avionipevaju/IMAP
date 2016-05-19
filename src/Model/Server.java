@@ -115,6 +115,11 @@ public class Server {
 		
 		case "SELECT":
 			Folder folder = mMailBox.getFolder(mData.trim());
+			try {
+				folder.open(Folder.READ_ONLY);
+			} catch (MessagingException e1) {
+				e1.printStackTrace();
+			}
 			int counter = 0;
 					
 			try {
@@ -147,12 +152,15 @@ public class Server {
 			mMessage = mConst.concat(mTag.concat(" OK [READ-WRITE] SELECT completed"));
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
-			//Sad je u 
+			//Sad ulazi u Selected State
 			
 			break;
 			
 		case "FETCH" :
-			// Dogovoriti se oko Fetch-a, kako cemo sve fetch-ovati 
+			// Dogovoriti se oko Fetch-a, kako cemo sve fetch-ovati
+			mData = mData.trim();
+			//int numOfMessage = 
+			
 			break;
 
 		default:
