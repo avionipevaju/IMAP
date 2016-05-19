@@ -2,6 +2,8 @@ package Viewer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -41,7 +43,24 @@ public class MainFrame extends JFrame {
 		initComponent();
 		//initLookAndFeel();
 		
-		
+		addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+
+				mModel.closeConnection();
+				
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				// TODO Auto-generated method stub
+				super.windowClosing(e);
+			}
+			
+			
+			
+		});
 		
 	}
 

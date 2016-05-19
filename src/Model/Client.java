@@ -255,4 +255,16 @@ public class Client {
 		this.mCurrentMsg = mMsgCount - mCurrentMsg;
 	}
 
+	public void closeConnection() {
+		mCommand=mConst+" * Closing connection";
+		mSocketOut.println(mCommand);
+		try {
+			mSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
 }
