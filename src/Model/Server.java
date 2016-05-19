@@ -162,6 +162,14 @@ public class Server {
 			
 			break;
 			
+		case "CLOSE" :
+			mMessage = mConst.concat(mTag.concat(" OK CLOSE completed"));
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+			mCurrentState = State.Selected;
+
+			break;
+			
 		case "FETCH" :
 			mData = mData.trim();
 			int numOfMessage = Character.getNumericValue(mData.charAt(0));
