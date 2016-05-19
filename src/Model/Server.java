@@ -8,7 +8,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import javax.mail.Folder;
-import javax.mail.MessagingException;
+import javax.mail.Message;
+import javax.mail.Message.RecipientType;
 
 public class Server {
 	
@@ -22,6 +23,8 @@ public class Server {
 	private final String mUser = "rafdummy@outlook.com";
 	private final String mPass = "dummymail12";
 	private Mailbox mMailBox;
+	private Folder mCurrentFolder = null;
+	private State mCurrentState;
 
 	
 	public Server() throws Exception {
@@ -32,6 +35,7 @@ public class Server {
 		mOutput = new PrintWriter(new OutputStreamWriter(mSocket.getOutputStream()),true);
 		
 		//Not Authenticated State
+		mCurrentState = State.Not_Authenticated;
 		
 		mMessage = mConst.concat(mGreeting);
 		System.out.println(mMessage);
@@ -94,7 +98,7 @@ public class Server {
 		return false;
 	}
 	
-	public void doCommand() {
+	public void doCommand() throws Exception {
 		
 		switch (mCommand) {
 		case "LOGIN":
@@ -103,6 +107,7 @@ public class Server {
 				System.out.println(mMessage);
 				mOutput.println(mMessage);
 				//Sad ulazi u Authenticated State
+				mCurrentState = State.Authenticated;
 				mMailBox = new Mailbox(mUser, mPass);
 			}
 			else {
@@ -114,38 +119,32 @@ public class Server {
 			break;
 		
 		case "SELECT":
-			Folder folder = mMailBox.getFolder(mData.trim());
-			try {
-				folder.open(Folder.READ_ONLY);
-			} catch (MessagingException e1) {
-				e1.printStackTrace();
+			if (mCurrentFolder != null){
+				mCurrentFolder.close(true);
 			}
-			int counter = 0;
-					
-			try {
-				counter = folder.getMessageCount();
-			} catch (MessagingException e) {
-				e.printStackTrace();
-			}
+			mCurrentFolder = mMailBox.getFolder(mData.trim());
+			mCurrentFolder.open(Folder.READ_ONLY);
+			int counter = mCurrentFolder.getMessageCount();
+
 			mMessage = mConst.concat("* " + counter + " EXISTS");
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
 			
-			counter = mMailBox.recentCount(folder);
+			counter = mMailBox.recentCount(mCurrentFolder);
 			mMessage = mConst.concat("* " + counter + " RECENT");
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
 			
-			counter = mMailBox.unseenCount(folder);
+			counter = mMailBox.unseenCount(mCurrentFolder);
 			mMessage = mConst.concat("* OK [UNSEEN " + counter + "] Message " + counter + " is first unseen");
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
 			
-			mMessage = mConst.concat("* FLAGS " + mMailBox.definedFlags(folder));
+			mMessage = mConst.concat("* FLAGS " + mMailBox.definedFlags(mCurrentFolder));
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
 
-			mMessage = mConst.concat("* OK [PERMANENTFLAGS " + folder.getPermanentFlags().toString() + "]");
+			mMessage = mConst.concat("* OK [PERMANENTFLAGS " + mCurrentFolder.getPermanentFlags().toString() + "]");
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
 			
@@ -153,13 +152,71 @@ public class Server {
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
 			//Sad ulazi u Selected State
+			mCurrentState = State.Selected;
 			
 			break;
 			
 		case "FETCH" :
-			// Dogovoriti se oko Fetch-a, kako cemo sve fetch-ovati
 			mData = mData.trim();
-			//int numOfMessage = 
+			int numOfMessage = Character.getNumericValue(mData.charAt(0));
+			Message msg = mCurrentFolder.getMessage(numOfMessage);
+			
+			if (mData.contains("FULL")) {
+				//celu poruku i header i body
+				mMessage = mConst.concat("* " + numOfMessage + " FETCH FULL");
+				System.out.println(mMessage);
+				mOutput.println(mMessage);
+
+				
+			}else
+				if (mData.contains("BODY")) {
+					//samo body, sadrzaj
+					mMessage = mConst.concat("* " + numOfMessage + " FETCH BODY");
+					System.out.println(mMessage);
+					mOutput.println(mMessage);
+
+					
+				}else
+					if (mData.contains("HEADER")) {
+						//samo header
+						mMessage = mConst.concat("* " + numOfMessage + " FETCH HEADER");
+						System.out.println(mMessage);
+						mOutput.println(mMessage);
+						
+						//Date
+						mMessage = mConst.concat("Date: " + msg.getSentDate().toString());
+						System.out.println(mMessage);
+						mOutput.println(mMessage);
+						
+						//From
+						mMessage = mConst.concat("From: " + msg.getFrom().toString());
+						System.out.println(mMessage);
+						mOutput.println(mMessage);
+						
+						//Subject
+						mMessage = mConst.concat("Subject: " + msg.getSubject());
+						System.out.println(mMessage);
+						mOutput.println(mMessage);
+						
+						//To
+						mMessage = mConst.concat("To: " + msg.getRecipients(RecipientType.TO).toString());
+						System.out.println(mMessage);
+						mOutput.println(mMessage);
+						
+						//Cc
+						mMessage = mConst.concat("Cc: " + msg.getRecipients(RecipientType.CC).toString());
+						System.out.println(mMessage);
+						mOutput.println(mMessage);
+						
+						//Content type
+						mMessage = mConst.concat("Content-Type: " + msg.getContentType().toString());
+						System.out.println(mMessage);
+						mOutput.println(mMessage);
+
+						mMessage = mConst.concat(mTag.concat(" OK FETCH completed"));
+						System.out.println(mMessage);
+						mOutput.println(mMessage);	
+					}
 			
 			break;
 

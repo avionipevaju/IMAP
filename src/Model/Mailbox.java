@@ -1,21 +1,13 @@
 package Model;
 
-import java.util.ArrayList;
 import java.util.Properties;
 
-import javax.mail.Address;
-import javax.mail.BodyPart;
 import javax.mail.Flags.Flag;
 import javax.mail.Folder;
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.swing.JOptionPane;
-
-import com.sun.mail.auth.MD4;
-import com.sun.mail.imap.protocol.FLAGS;
 
 public class Mailbox {
 	
