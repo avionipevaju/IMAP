@@ -57,13 +57,16 @@ public class Client {
 		mRecievedData = mSocketIn.readLine();
 		System.out.println(mRecievedData);
 
+		while(true){
 		mLoginView = new LoginScreen(mInstance);
 
 		if (flag) {
 			mCommand = "login" + " " + mUser + " " + mPass;
 			sendCommand(mCommand);
-			System.out.println(mSocketIn.readLine());
-			initMailboxes();
+			System.out.println(mRecievedData=mSocketIn.readLine());
+			if(mRecievedData.contains("NO"))
+				continue;
+			break;
 		} else {
 			mCommand = "logout";
 			sendCommand(mCommand);
@@ -72,7 +75,9 @@ public class Client {
 			mSocket.close();
 			System.exit(1);
 		}
-
+		}
+		
+		initMailboxes();
 		SwingUtilities.invokeLater(new Runnable() {
 
 			@Override

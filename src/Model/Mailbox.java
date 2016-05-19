@@ -10,73 +10,51 @@ import javax.mail.Store;
 import javax.swing.JOptionPane;
 
 public class Mailbox {
-	
-	private String mUser,mPass;
-	private Folder mInbox,mSent,mTrash;
-	
-	public Mailbox(String user,String pass) {
-		mUser=user;
-		mPass=pass;
+
+	private String mUser, mPass;
+	private Folder mInbox, mSent, mTrash;
+
+	public Mailbox(String user, String pass) {
+		mUser = user;
+		mPass = pass;
 		read();
 	}
-	
 
-	
 	private void read() {
-		
-		Properties properties=new Properties();
+
+		Properties properties = new Properties();
 		properties.put("mail.imap.port", "993");
 		properties.put("mail.imaps.ssl.trust", "*");
 		properties.setProperty("mail.store.protocol", "imaps");
-		
+
 		try {
-            Session session = Session.getInstance(properties, null);
-            Store store = session.getStore();
-            store.connect("imap-mail.outlook.com", mUser, mPass);
-            mInbox = store.getFolder("INBOX");
-            mSent=store.getFolder("SENT");
-            mTrash=store.getFolder("DELETED");
-            
-            //U konzoli ispisuje prvi mail
-//            mInbox.open(Folder.READ_ONLY);
-//            Message msg = mInbox.getMessage(mInbox.getMessageCount());
-//            Address[] in = msg.getFrom();
-//            for (Address address : in) {
-//                System.out.println("FROM:" + address.toString());
-//            }
-//            Multipart mp = (Multipart) msg.getContent();
-//            BodyPart bp = mp.getBodyPart(0);
-//            System.out.println("SENT DATE:" + msg.getSentDate());
-//            System.out.println("SUBJECT:" + msg.getSubject());
-//            System.out.println("CONTENT:" + bp.getContent());
-        } catch (Exception mex) {
-        	mex.printStackTrace();
-        	JOptionPane.showMessageDialog(null, "LOGIN FAILED");
-        	System.exit(1);
-        }
-    
-		
-		
+			Session session = Session.getInstance(properties, null);
+			Store store = session.getStore();
+			store.connect("imap-mail.outlook.com", mUser, mPass);
+			mInbox = store.getFolder("INBOX");
+			mSent = store.getFolder("SENT");
+			mTrash = store.getFolder("DELETED");
+
+		} catch (Exception mex) {
+			// mex.printStackTrace();
+			JOptionPane.showMessageDialog(null, "LOGIN FAILED");
+			// System.exit(1);
+		}
+
 	}
-
-
 
 	public Folder getInbox() {
 		return mInbox;
 	}
 
-
-
 	public Folder getSent() {
 		return mSent;
 	}
 
-
-
 	public Folder getTrash() {
 		return mTrash;
 	}
-	
+
 	public Folder getFolder(String name) {
 		if (name.equalsIgnoreCase("INBOX"))
 			return mInbox;
@@ -86,7 +64,7 @@ public class Mailbox {
 			return mTrash;
 		return null;
 	}
-	
+
 	public int recentCount(Folder folder) {
 		int counter = 0;
 		try {
@@ -112,7 +90,7 @@ public class Mailbox {
 		}
 		return counter;
 	}
-	
+
 	public String definedFlags(Folder folder) {
 		if (folder.equals(mInbox))
 			return "SEEN, DELETE, ANSWERED, FLAGGED, RECENT";
@@ -124,5 +102,4 @@ public class Mailbox {
 
 	}
 
-	
 }
