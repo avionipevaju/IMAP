@@ -5,10 +5,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Scanner;
 
-import javax.sound.midi.Synthesizer;
+import javax.mail.Folder;
+import javax.mail.MessagingException;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.SwingUtilities;
 
 import Viewer.LoginScreen;
@@ -27,6 +28,7 @@ public class Client {
 	private Client mInstance;
 	private String mUser,mPass;
 	private LoginScreen mLoginView;
+	private JList<Folder> mMailboxes;
 	boolean flag=true;
 
 	public Client() throws Exception {
@@ -34,6 +36,7 @@ public class Client {
 		mChar = 'a';
 		mNumeric = 0;
 		mInstance=this;
+		mMailboxes=new JList<>();
 		
 		mSocket = new Socket("localhost", 1992);
 
@@ -50,6 +53,7 @@ public class Client {
 			mCommand="login"+" "+mUser+" "+mPass;
 			sendCommand(mCommand);
 			System.out.println(mSocketIn.readLine());
+			initMailboxes();
 		}else{
 			mCommand="logout";
 			sendCommand(mCommand);
@@ -64,7 +68,7 @@ public class Client {
 			
 			@Override
 			public void run() {
-				new MainFrame(mUser,mPass);
+				new MainFrame(mInstance,mUser,mPass);
 				
 			}
 		});	
@@ -124,5 +128,51 @@ public class Client {
 	public void setPass(String mPass) {
 		this.mPass = mPass;
 	}
+
+	public JList<Folder> getMailboxes() {
+		return mMailboxes;
+	}
+
+	
+	
+	private void initMailboxes(){
+		Mailbox mail=new Mailbox(mUser, mPass);
+		Folder inbox=mail.getInbox();
+		Folder sent=mail.getSent();
+		Folder deleted=mail.getTrash();
+
+		int k = 0;
+		try {
+			inbox.open(Folder.READ_ONLY);
+			k = inbox.getMessageCount();
+		} catch (MessagingException e1) {
+			e1.printStackTrace();
+		}
+		
+		DefaultListModel<Folder> model=new DefaultListModel<>();
+		model.addElement(inbox);
+		model.addElement(sent);
+		model.addElement(deleted);
+		
+		mMailboxes.setModel(model);
+	}
+
+	public void notifyToSend(String name) {
+		mCommand="SELECT "+name;
+		sendCommand(mCommand);
+		try{
+		System.out.println(mSocketIn.readLine());
+		System.out.println(mSocketIn.readLine());
+		System.out.println(mSocketIn.readLine());
+		System.out.println(mSocketIn.readLine());
+		System.out.println(mSocketIn.readLine());
+		System.out.println(mSocketIn.readLine());
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+	
+	
 
 }

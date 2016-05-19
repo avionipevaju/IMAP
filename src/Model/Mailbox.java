@@ -98,7 +98,7 @@ public class Mailbox {
 	public int recentCount(Folder folder) {
 		int counter = 0;
 		try {
-			for (int i = 0; i < folder.getMessageCount(); i++) {
+			for (int i = 1; i <= folder.getMessageCount(); i++) {
 				if (folder.getMessage(i).getFlags().contains(Flag.RECENT))
 					counter++;
 			}
@@ -111,7 +111,7 @@ public class Mailbox {
 	public int unseenCount(Folder folder) {
 		int counter = 0;
 		try {
-			for (int i = 0; i < folder.getMessageCount(); i++) {
+			for (int i = 1; i <= folder.getMessageCount(); i++) {
 				if (!folder.getMessage(i).getFlags().contains(Flag.SEEN))
 					counter++;
 			}

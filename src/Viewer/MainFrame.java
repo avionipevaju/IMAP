@@ -2,8 +2,6 @@ package Viewer;
 
 import java.awt.BorderLayout;
 
-import javax.mail.*;
-import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -15,7 +13,8 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import Model.Mailbox;
+import Listeners.MailboxMouseAdapter;
+import Model.Client;
 
 
 public class MainFrame extends JFrame {
@@ -25,11 +24,12 @@ public class MainFrame extends JFrame {
 	private JMenuBar mMenuBar;
 	private JPanel mToolPanel;
 	private JList<String> mWorkspace;
-	private JList<Folder> mList;
-	private String mUser,mPass;
+	private Client mModel;
+	private MailboxMouseAdapter mAdapter;
 
 
-	public MainFrame(String user, String pass) {
+	public MainFrame(Client client,String user, String pass) {
+		mModel=client;
 		setSize(1200, 640);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setLayout(new BorderLayout());
@@ -37,8 +37,6 @@ public class MainFrame extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setVisible(true);
-		mUser=user;
-		mPass=pass;
 		initComponent();
 		//initLookAndFeel();
 		
@@ -54,57 +52,38 @@ public class MainFrame extends JFrame {
 		add(mToolPanel, BorderLayout.NORTH);
 
 		mSplitPane = new JSplitPane();
-		mList=new JList<>();
-		mList.setName("FOLDERS");
 		mSplitPane.setDividerLocation(250);
 		mWorkspace=new JList<>();
 		mSplitPane.setRightComponent(mWorkspace);
 		
-		Mailbox mail=new Mailbox(mUser, mPass);
-		Folder inbox=mail.getInbox();
-		Folder sent=mail.getSent();
-		Folder deleted=mail.getTrash();
-	
-		DefaultListModel<String> mailModel=new DefaultListModel<>();
-		int k = 0;
-		try {
-			inbox.open(Folder.READ_ONLY);
-			k = inbox.getMessageCount();
-		} catch (MessagingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		for(int i=0;i<k;i++){
-		Message msg=null;
-		String temp=" ";
-		try {
-			
-			msg = inbox.getMessage(inbox.getMessageCount()-i);
-			Address[] in = msg.getFrom();      
-	        temp=temp.concat(in[0].toString());
-			temp=temp.concat("      ");
-			temp=temp.concat(msg.getSubject());
-			temp=temp.concat("      ");
-			temp=temp.concat(msg.getSentDate().toString());
-			 
-		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		mailModel.addElement(temp);
-		}
-		mWorkspace.setModel(mailModel);
+		mAdapter=new MailboxMouseAdapter(mModel);
+		mModel.getMailboxes().addMouseListener(mAdapter);
+		mSplitPane.setLeftComponent(mModel.getMailboxes());
 		
 		
 		
-		DefaultListModel<Folder> model=new DefaultListModel<>();
-		model.addElement(inbox);
-		model.addElement(sent);
-		model.addElement(deleted);
-		
-		mList.setModel(model);
-		mSplitPane.setLeftComponent(mList);
+		//prikazivanje mejlova
+//		DefaultListModel<String> mailModel=new DefaultListModel<>();
+//		for(int i=0;i<k;i++){
+//		Message msg=null;
+//		String temp=" ";
+//		try {
+//			
+//			msg = inbox.getMessage(inbox.getMessageCount()-i);
+//			Address[] in = msg.getFrom();      
+//	        temp=temp.concat(in[0].toString());
+//			temp=temp.concat("      ");
+//			temp=temp.concat(msg.getSubject());
+//			temp=temp.concat("      ");
+//			temp=temp.concat(msg.getSentDate().toString());
+//			 
+//		} catch (MessagingException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		mailModel.addElement(temp);
+//		}
+//		mWorkspace.setModel(mailModel);
 		
 		add(mSplitPane, BorderLayout.CENTER);
 
