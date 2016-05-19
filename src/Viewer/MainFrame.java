@@ -46,16 +46,8 @@ public class MainFrame extends JFrame {
 		addWindowListener(new WindowAdapter() {
 
 			@Override
-			public void windowClosed(WindowEvent e) {
-
-				mModel.closeConnection();
-				
-			}
-
-			@Override
 			public void windowClosing(WindowEvent e) {
-				// TODO Auto-generated method stub
-				super.windowClosing(e);
+				mModel.closeConnection();
 			}
 			
 			

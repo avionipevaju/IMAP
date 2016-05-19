@@ -56,16 +56,21 @@ public class Server {
 			
 			mMessage = mInput.readLine();
 			System.out.println(mMessage);
+			if (mMessage.contains("*"))
+				break;
 			parseCommand();
+
 		}
 		
-		mMessage = mConst.concat("* BYE IMAP server terminating connection");
-		System.out.println(mMessage);
-		mOutput.println(mMessage);
-		
-		mMessage = mConst.concat(mTag.concat(" OK LOGOUT completed"));
-		System.out.println(mMessage);
-		mOutput.println(mMessage);
+		if (mCommand.equalsIgnoreCase("LOGOUT")) {
+			mMessage = mConst.concat("* BYE IMAP server terminating connection");
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+			
+			mMessage = mConst.concat(mTag.concat(" OK LOGOUT completed"));
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+		}
 		
 		mSocket.close();
 		
