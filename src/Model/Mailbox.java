@@ -1,15 +1,21 @@
 package Model;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.Flags.Flag;
 import javax.mail.Folder;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.swing.JOptionPane;
+
+import com.sun.mail.auth.MD4;
+import com.sun.mail.imap.protocol.FLAGS;
 
 public class Mailbox {
 	
@@ -79,9 +85,52 @@ public class Mailbox {
 		return mTrash;
 	}
 	
+	public Folder getFolder(String name) {
+		if (name.equalsIgnoreCase("INBOX"))
+			return mInbox;
+		if (name.equalsIgnoreCase("SENT"))
+			return mSent;
+		if (name.equalsIgnoreCase("DELETED"))
+			return mTrash;
+		return null;
+	}
 	
+	public int recentCount(Folder folder) {
+		int counter = 0;
+		try {
+			for (int i = 0; i < folder.getMessageCount(); i++) {
+				if (folder.getMessage(i).getFlags().contains(Flag.RECENT))
+					counter++;
+			}
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+		return counter;
+	}
 
-
+	public int unseenCount(Folder folder) {
+		int counter = 0;
+		try {
+			for (int i = 0; i < folder.getMessageCount(); i++) {
+				if (!folder.getMessage(i).getFlags().contains(Flag.SEEN))
+					counter++;
+			}
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+		return counter;
+	}
 	
+	public String definedFlags(Folder folder) {
+		if (folder.equals(mInbox))
+			return "SEEN, DELETE, ANSWERED, FLAGGED, RECENT";
+		if (folder.equals(mSent))
+			return " DELETE, FLAGGED";
+		if (folder.equals(mTrash))
+			return "SEEN, DELETE, ANSWERED, FLAGGED";
+		return null;
+
+	}
+
 	
 }
