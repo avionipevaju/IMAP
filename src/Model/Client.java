@@ -2,10 +2,12 @@ package Model;
 
 import java.awt.Dimension;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import javax.mail.Address;
 import javax.mail.Folder;
@@ -15,6 +17,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.SwingUtilities;
 
+import Viewer.EmailViewer;
 import Viewer.LoginScreen;
 import Viewer.MainFrame;
 
@@ -25,7 +28,7 @@ public class Client {
 	private PrintWriter mSocketOut;
 	private String mTag;
 	private final String mConst = "C: ";
-	private String mCommand, mRecievedData, mRecievedMailbox, mStringResponse, mTagResponse;
+	private String mCommand, mRecievedData, mRecievedMailbox;
 	private char mChar;
 	private int mNumeric;
 	private Client mInstance;
@@ -34,7 +37,8 @@ public class Client {
 	private Mailbox mMailbox;
 	private JList<Folder> mMailboxes;
 	private JList<String> mWorkspace;
-	private DefaultListModel<String> mListModel;
+	private int mCurrentMsg = 0;
+	private int mMsgCount = 0;
 	boolean flag = true;
 
 	public Client() throws Exception {
@@ -43,7 +47,7 @@ public class Client {
 		mNumeric = 0;
 		mInstance = this;
 		mMailboxes = new JList<>();
-		mMailboxes.setMinimumSize(new Dimension(250,0));
+		mMailboxes.setMinimumSize(new Dimension(250, 0));
 		mWorkspace = new JList<>();
 
 		mSocket = new Socket("localhost", 1992);
@@ -168,20 +172,19 @@ public class Client {
 			mailbox = mMailbox.getInbox();
 		}
 
-		int msgCount = 0;
 		try {
-			msgCount = mailbox.getMessageCount();
+			mMsgCount = mailbox.getMessageCount();
 		} catch (MessagingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		DefaultListModel<String> mailModel = new DefaultListModel<>();
-		for (int i = 0; i < msgCount; i++) {
+		for (int i = 0; i < mMsgCount; i++) {
 			Message msg = null;
 			String temp = " ";
 			try {
 
-				msg = mailbox.getMessage(msgCount - i);
+				msg = mailbox.getMessage(mMsgCount - i);
 				Address[] in = msg.getFrom();
 				temp = temp.concat(in[0].toString());
 				temp = temp.concat("      ");
@@ -197,7 +200,30 @@ public class Client {
 		}
 		mWorkspace.setModel(mailModel);
 	}
-	
+
+	public boolean notifyToSend(String name, int msgNumber) throws IOException {
+
+		mCommand = "fetch " + msgNumber + " " + name;
+		sendCommand(mCommand);
+
+		String temp = "";
+
+		while (!(mRecievedData = mSocketIn.readLine()).contains("FETCH completed")) {
+			//System.out.println(mRecievedData);
+			if (!mRecievedData.contains("*")) {
+				StringBuilder sb=new StringBuilder(mRecievedData);
+				sb.delete(0, 2);
+				mRecievedData=sb.toString();
+				temp = temp.concat(mRecievedData+ "\n");
+			}
+		}
+		//System.out.println(mRecievedData);
+		// temp=temp.concat(mRecievedData+"\n");
+
+		new EmailViewer(temp);
+		return false;
+	}
+
 	public boolean notifyToSend(String name) {
 		mRecievedMailbox = name;
 		mCommand = "SELECT " + name;
@@ -219,6 +245,14 @@ public class Client {
 
 	public JList<String> getWorkspace() {
 		return mWorkspace;
+	}
+
+	public int getCurrentMsg() {
+		return mCurrentMsg;
+	}
+
+	public void setCurrentMsg(int mCurrentMsg) {
+		this.mCurrentMsg = mMsgCount - mCurrentMsg;
 	}
 
 }

@@ -289,7 +289,7 @@ public class Server {
 	
 	private void sendBody(Part msg) throws Exception, IOException {
 	    if (msg.isMimeType("text/plain")) {
-	        mMessage = mConst.concat("Body: " + (String)msg.getContent());
+	        mMessage = mConst.concat((String)msg.getContent());
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
 	      } 

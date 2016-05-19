@@ -14,6 +14,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import Listeners.MailMouseAdapter;
 import Listeners.MailboxMouseAdapter;
 import Model.Client;
 
@@ -21,7 +22,7 @@ import Model.Client;
 public class MainFrame extends JFrame {
 
 	private JSplitPane mSplitPane;
-	private JToolBar mToolbar;
+	private FetchToolbar mToolbar;
 	private JMenuBar mMenuBar;
 	private JPanel mToolPanel;
 	private Client mModel;
@@ -68,7 +69,7 @@ public class MainFrame extends JFrame {
 		mMenuBar.add(menu);
 		mToolPanel.add(mMenuBar, BorderLayout.NORTH);
 
-		mToolbar = new JToolBar();
+		mToolbar = new FetchToolbar(mModel);
 		mToolPanel.add(mToolbar, BorderLayout.CENTER);
 
 	}

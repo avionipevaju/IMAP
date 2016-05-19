@@ -12,6 +12,7 @@ public class MailboxMouseAdapter extends MouseAdapter {
 
 	private Client mModel;
 	private MainFrame mMainFrame;
+	private MailMouseAdapter mMailAdapter;
 
 	public MailboxMouseAdapter(Client model,MainFrame view) {
 		mModel = model;
@@ -25,6 +26,8 @@ public class MailboxMouseAdapter extends MouseAdapter {
 			Folder mailbox = (Folder) source;
 			if (mModel.notifyToSend(mailbox.getName())) {
 				mModel.initMailboxMessages();
+				mMailAdapter=new MailMouseAdapter(mModel);
+				mModel.getWorkspace().addMouseListener(mMailAdapter);
 				mMainFrame.getSplitPane().setRightComponent(mModel.getWorkspace());
 			}
 
