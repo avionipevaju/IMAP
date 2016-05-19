@@ -4,6 +4,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -26,11 +28,11 @@ public class LoginScreen extends JDialog {
 	private Client mModel;
 
 	public LoginScreen(Client client) {
-		
-		mModel=client;
-		
+
+		mModel = client;
+
 		try {
-			//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			// UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			UIManager.setLookAndFeel("com.jtattoo.plaf.aero.AeroLookAndFeel");
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e) {
@@ -53,6 +55,17 @@ public class LoginScreen extends JDialog {
 	}
 
 	private void initComponents() {
+
+		addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				mModel.closeConnection();
+				System.exit(1);
+			}
+
+		});
+
 		JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
 		mUserLabel = new JLabel("Username:");
 		mUserField = new JTextField(25);
@@ -75,7 +88,7 @@ public class LoginScreen extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				mModel.setFlag(false);
 				dispose();
-				//System.exit(1);
+				// System.exit(1);
 
 			}
 		});
@@ -84,7 +97,7 @@ public class LoginScreen extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				mModel.setUser(mUserField.getText());
 				mModel.setPass(String.valueOf(mPassField.getPassword()));
 				mModel.setFlag(true);

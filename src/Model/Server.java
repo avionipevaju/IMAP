@@ -49,6 +49,10 @@ public class Server {
 		mMessage = mInput.readLine();
 		System.out.println(mMessage);
 		
+		if (mMessage.contains("*")){
+			mSocket.close();
+			return;
+		}
 		parseCommand();
 		
 		while (!mCommand.equalsIgnoreCase("LOGOUT")) {
