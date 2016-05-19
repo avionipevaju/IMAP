@@ -1,17 +1,21 @@
 package Viewer;
 
-import java.awt.GridLayout;
-import java.util.ArrayList;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JTextArea;
+
+import Model.Client;
 
 public class EmailViewer extends JDialog {
 	
 	private String mData;
 	private JTextArea mArea;
+	private Client mModel;
 	
-	public EmailViewer(String data) {
+	public EmailViewer(String data,Client client) {
+		mModel=client;
 		mData=data;
 		setTitle("Email");
 		setResizable(false);
@@ -30,6 +34,18 @@ public class EmailViewer extends JDialog {
 		mArea=new JTextArea();
 		mArea.setText(mData);
 		add(mArea);
+		
+		addWindowListener(new WindowAdapter() {
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				mModel.closeMail();
+			}
+
+			
+			
+		});
+		
 	}
 	
 	

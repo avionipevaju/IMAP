@@ -96,10 +96,6 @@ public class Server {
 		else {
 			mData = "";
 		}
-		System.out.println("Tag: " + mTag);
-		System.out.println("Command: " + mCommand);
-		System.out.println("Data: " + mData);
-		
 	}
 	
 	private boolean checkLogIn() {

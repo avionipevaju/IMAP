@@ -20,7 +20,6 @@ public class MailMouseAdapter extends MouseAdapter {
 	public void mouseClicked(MouseEvent e) {
 			mMsgNumber=mModel.getWorkspace().getSelectedIndex();
 			mModel.setCurrentMsg(mMsgNumber);
-			System.out.println(mModel.getCurrentMsg());
 	}
 	
 }

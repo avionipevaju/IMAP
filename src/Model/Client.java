@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 
 import javax.mail.Address;
 import javax.mail.Folder;
@@ -59,7 +58,6 @@ public class Client {
 		System.out.println(mRecievedData);
 
 		mLoginView = new LoginScreen(mInstance);
-		System.out.println("PRSAO GUI");
 
 		if (flag) {
 			mCommand = "login" + " " + mUser + " " + mPass;
@@ -209,18 +207,15 @@ public class Client {
 		String temp = "";
 
 		while (!(mRecievedData = mSocketIn.readLine()).contains("FETCH completed")) {
-			//System.out.println(mRecievedData);
 			if (!mRecievedData.contains("*")) {
-				StringBuilder sb=new StringBuilder(mRecievedData);
+				StringBuilder sb = new StringBuilder(mRecievedData);
 				sb.delete(0, 2);
-				mRecievedData=sb.toString();
-				temp = temp.concat(mRecievedData+ "\n");
+				mRecievedData = sb.toString();
+				temp = temp.concat(mRecievedData + "\n");
 			}
 		}
-		//System.out.println(mRecievedData);
-		// temp=temp.concat(mRecievedData+"\n");
 
-		new EmailViewer(temp);
+		new EmailViewer(temp,this);
 		return false;
 	}
 
@@ -256,10 +251,36 @@ public class Client {
 	}
 
 	public void closeConnection() {
-		mCommand=mConst+" * Closing connection";
+		mCommand = mConst + " * Closing connection";
 		mSocketOut.println(mCommand);
 		try {
 			mSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void logout() {
+		mCommand = "logout";
+		sendCommand(mCommand);
+		try {
+			System.out.println(mSocketIn.readLine());
+			System.out.println(mSocketIn.readLine());
+			mSocket.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.exit(1);
+
+	}
+
+	public void closeMail() {
+		mCommand="close";
+		sendCommand(mCommand);
+		try {
+			System.out.println(mSocketIn.readLine());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
