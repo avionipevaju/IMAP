@@ -116,8 +116,6 @@ public class Server {
 			Scanner temp = new Scanner(mData);
 			String user = temp.next();
 			String pass = temp.next();
-			System.out.println("User " + user);
-			System.out.println("Pass " + pass);
 			
 			mMailBox = new Mailbox(user.trim(), pass.trim(), this);
 			if (mLoggedIn) {
@@ -184,8 +182,10 @@ public class Server {
 			
 		case "FETCH" :
 			mData = mData.trim();
-			int numOfMessage = Character.getNumericValue(mData.charAt(0));
+			Scanner in=new Scanner(mData);
+			int numOfMessage = Integer.parseInt(in.next());
 			Message msg = mCurrentFolder.getMessage(numOfMessage);
+			in.close();
 			
 			if (mData.contains("FULL")) {
 				//celu poruku i header i body

@@ -39,6 +39,7 @@ public class Client {
 	private int mCurrentMsg = 0;
 	private int mMsgCount = 0;
 	boolean flag = true;
+	private Folder mCurrent=null;
 
 	public Client() throws Exception {
 
@@ -57,26 +58,26 @@ public class Client {
 		mRecievedData = mSocketIn.readLine();
 		System.out.println(mRecievedData);
 
-		while(true){
-		mLoginView = new LoginScreen(mInstance);
+		while (true) {
+			mLoginView = new LoginScreen(mInstance);
 
-		if (flag) {
-			mCommand = "login" + " " + mUser + " " + mPass;
-			sendCommand(mCommand);
-			System.out.println(mRecievedData=mSocketIn.readLine());
-			if(mRecievedData.contains("NO"))
-				continue;
-			break;
-		} else {
-			mCommand = "logout";
-			sendCommand(mCommand);
-			System.out.println(mSocketIn.readLine());
-			System.out.println(mSocketIn.readLine());
-			mSocket.close();
-			System.exit(1);
+			if (flag) {
+				mCommand = "LOGIN" + " " + mUser + " " + mPass;
+				sendCredentialsCommand(mCommand);
+				System.out.println(mRecievedData = mSocketIn.readLine());
+				if (mRecievedData.contains("NO"))
+					continue;
+				break;
+			} else {
+				mCommand = "logout";
+				sendCommand(mCommand);
+				System.out.println(mSocketIn.readLine());
+				System.out.println(mSocketIn.readLine());
+				mSocket.close();
+				System.exit(1);
+			}
 		}
-		}
-		
+
 		initMailboxes();
 		SwingUtilities.invokeLater(new Runnable() {
 
@@ -101,6 +102,11 @@ public class Client {
 	private void sendCommand(String command) {
 		makeTag(mChar, mNumeric);
 		mSocketOut.println(mConst + mTag + " " + command.toUpperCase());
+	}
+
+	private void sendCredentialsCommand(String command) {
+		makeTag(mChar, mNumeric);
+		mSocketOut.println(mConst + mTag + " " + command);
 	}
 
 	private void fillCommand(String command) {
@@ -141,14 +147,6 @@ public class Client {
 		Folder sent = mMailbox.getSent();
 		Folder deleted = mMailbox.getTrash();
 
-		int k = 0;
-		try {
-			inbox.open(Folder.READ_ONLY);
-			k = inbox.getMessageCount();
-		} catch (MessagingException e1) {
-			e1.printStackTrace();
-		}
-
 		DefaultListModel<Folder> model = new DefaultListModel<>();
 		model.addElement(inbox);
 		model.addElement(sent);
@@ -159,35 +157,49 @@ public class Client {
 
 	public void initMailboxMessages() {
 		mWorkspace = new JList<>();
-		Folder mailbox = null;
-
+		
+		if(mCurrent!=null){
+			try {
+				mCurrent.close(true);
+			} catch (MessagingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		switch (mRecievedMailbox) {
 		case "INBOX":
-			mailbox = mMailbox.getInbox();
+			mCurrent = mMailbox.getInbox();
 			break;
 		case "SENT":
-			mailbox = mMailbox.getSent();
+			mCurrent = mMailbox.getSent();
+			break;
+		case "Sent":
+			mCurrent = mMailbox.getSent();
 			break;
 		case "DELETED":
-			mailbox = mMailbox.getTrash();
+			mCurrent = mMailbox.getTrash();
 			break;
 		default:
-			mailbox = mMailbox.getInbox();
+			mCurrent = mMailbox.getInbox();
 		}
 
 		try {
-			mMsgCount = mailbox.getMessageCount();
+			mCurrent.open(Folder.READ_ONLY);
+			mMsgCount = mCurrent.getMessageCount();
 		} catch (MessagingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		DefaultListModel<String> mailModel = new DefaultListModel<>();
-		for (int i = 0; i < mMsgCount; i++) {
+		int tempCount;
+		tempCount = mMsgCount > 10 ? 10 : mMsgCount;
+		for (int i = 0; i < tempCount; i++) {
 			Message msg = null;
 			String temp = " ";
 			try {
 
-				msg = mailbox.getMessage(mMsgCount - i);
+				msg = mCurrent.getMessage(mMsgCount - i);
 				Address[] in = msg.getFrom();
 				temp = temp.concat(in[0].toString());
 				temp = temp.concat("      ");
@@ -213,14 +225,18 @@ public class Client {
 
 		while (!(mRecievedData = mSocketIn.readLine()).contains("FETCH completed")) {
 			if (!mRecievedData.contains("*")) {
-				StringBuilder sb = new StringBuilder(mRecievedData);
-				sb.delete(0, 2);
-				mRecievedData = sb.toString();
+
+				if (mRecievedData.contains("S:")) {
+					StringBuilder sb = new StringBuilder(mRecievedData);
+					sb.delete(0, 2);
+					mRecievedData = sb.toString();
+				}
+
 				temp = temp.concat(mRecievedData + "\n");
 			}
 		}
 
-		new EmailViewer(temp,this);
+		new EmailViewer(temp, this);
 		return false;
 	}
 
@@ -282,7 +298,7 @@ public class Client {
 	}
 
 	public void closeMail() {
-		mCommand="close";
+		mCommand = "close";
 		sendCommand(mCommand);
 		try {
 			System.out.println(mSocketIn.readLine());
@@ -290,7 +306,7 @@ public class Client {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 }
