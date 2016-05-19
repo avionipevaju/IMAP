@@ -319,7 +319,12 @@ public class Server {
 	        int count = mp.getCount();
 	        for (int i = 0; i < count; i++)
 	            sendBody(mp.getBodyPart(i));
-	      }  
+	      } 
+	      else {
+	    	mMessage = mConst.concat("Unsupported type of message");
+			System.out.println(mMessage);
+			mOutput.println(mMessage);
+	         }
 
 	}
 	public boolean isLoggedIn() {
