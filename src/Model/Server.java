@@ -89,7 +89,7 @@ public class Server {
 	}
 	
 	private boolean checkLogIn() {
-		if (mData.contains(mUser) && mData.contains(mPass))
+		if (mData.contains(mUser.toUpperCase()) && mData.contains(mPass.toUpperCase()))
 			return true;
 		return false;
 	}
@@ -147,6 +147,7 @@ public class Server {
 			mMessage = mConst.concat(mTag.concat(" OK [READ-WRITE] SELECT completed"));
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
+			//Sad je u 
 			
 			break;
 			
