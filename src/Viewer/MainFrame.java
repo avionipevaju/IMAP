@@ -1,6 +1,7 @@
 package Viewer;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -23,7 +24,6 @@ public class MainFrame extends JFrame {
 	private JToolBar mToolbar;
 	private JMenuBar mMenuBar;
 	private JPanel mToolPanel;
-	private JList<String> mWorkspace;
 	private Client mModel;
 	private MailboxMouseAdapter mAdapter;
 
@@ -53,37 +53,12 @@ public class MainFrame extends JFrame {
 
 		mSplitPane = new JSplitPane();
 		mSplitPane.setDividerLocation(250);
-		mWorkspace=new JList<>();
-		mSplitPane.setRightComponent(mWorkspace);
 		
-		mAdapter=new MailboxMouseAdapter(mModel);
+		mSplitPane.setRightComponent(mModel.getWorkspace());
+		
+		mAdapter=new MailboxMouseAdapter(mModel,this);
 		mModel.getMailboxes().addMouseListener(mAdapter);
 		mSplitPane.setLeftComponent(mModel.getMailboxes());
-		
-		
-		
-		//prikazivanje mejlova
-//		DefaultListModel<String> mailModel=new DefaultListModel<>();
-//		for(int i=0;i<k;i++){
-//		Message msg=null;
-//		String temp=" ";
-//		try {
-//			
-//			msg = inbox.getMessage(inbox.getMessageCount()-i);
-//			Address[] in = msg.getFrom();      
-//	        temp=temp.concat(in[0].toString());
-//			temp=temp.concat("      ");
-//			temp=temp.concat(msg.getSubject());
-//			temp=temp.concat("      ");
-//			temp=temp.concat(msg.getSentDate().toString());
-//			 
-//		} catch (MessagingException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		mailModel.addElement(temp);
-//		}
-//		mWorkspace.setModel(mailModel);
 		
 		add(mSplitPane, BorderLayout.CENTER);
 
@@ -98,20 +73,11 @@ public class MainFrame extends JFrame {
 
 	}
 
-	private void initLookAndFeel() {
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			//UIManager.setLookAndFeel ( "com.alee.laf.WebLookAndFeel" );
-			//WebLookAndFeel.install();
-			//UIManager.setLookAndFeel("com.jtattoo.plaf.hifi.HiFiLookAndFeel");
-			//UIManager.setLookAndFeel("com.jtattoo.plaf.texture.TextureLookAndFeel");
-			//UIManager.setLookAndFeel("com.jtattoo.plaf.aero.AeroLookAndFeel");
-			SwingUtilities.updateComponentTreeUI(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
+	public JSplitPane getSplitPane() {
+		return mSplitPane;
 	}
+
 	
 	
 
