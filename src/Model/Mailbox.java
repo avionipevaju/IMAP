@@ -7,7 +7,10 @@ import javax.mail.Folder;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+
+import Viewer.ErrorDialog;
 
 public class Mailbox {
 
@@ -48,10 +51,11 @@ public class Mailbox {
 				mServer.setLoggedIn(true);
 
 		} catch (Exception mex) {
-			System.out.println(mServer.isLoggedIn());
+			//System.out.println(mServer.isLoggedIn());
 			if (mServer != null)
 				mServer.setLoggedIn(false);
-			JOptionPane.showMessageDialog(null, "LOGIN FAILED");
+			
+			ErrorDialog.getInstance().showDialog();
 			
 		}
 		
