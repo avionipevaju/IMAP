@@ -17,7 +17,9 @@ import javax.swing.JList;
 import javax.swing.SwingUtilities;
 
 import Viewer.EmailViewer;
+import Viewer.ListCellRenderer;
 import Viewer.LoginScreen;
+import Viewer.MailListCellRenderer;
 import Viewer.MainFrame;
 
 public class Client {
@@ -47,6 +49,7 @@ public class Client {
 		mNumeric = 0;
 		mInstance = this;
 		mMailboxes = new JList<>();
+		mMailboxes.setCellRenderer(new ListCellRenderer());
 		mMailboxes.setMinimumSize(new Dimension(250, 0));
 		mWorkspace = new JList<>();
 
@@ -157,6 +160,7 @@ public class Client {
 
 	public void initMailboxMessages() {
 		mWorkspace = new JList<>();
+		mWorkspace.setCellRenderer(new MailListCellRenderer());
 		
 		if(mCurrent!=null){
 			try {

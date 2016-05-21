@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -63,7 +64,8 @@ public class MainFrame extends JFrame {
 	}
 
 	private void initComponent() {
-
+		setIconImage(new ImageIcon(this.getClass().getResource("/res/mail.png")).getImage());
+		
 		mToolPanel = new JPanel();
 		mToolPanel.setLayout(new BorderLayout());
 		add(mToolPanel, BorderLayout.NORTH);

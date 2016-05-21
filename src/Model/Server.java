@@ -2,7 +2,6 @@ package Model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -10,10 +9,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
+import javax.mail.Address;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
 
@@ -252,7 +251,8 @@ public class Server {
 			mOutput.println(mMessage);
 		}
 		else {
-			mMessage = mConst.concat("From: " + msg.getFrom().toString());
+			Address[] in=msg.getFrom();
+			mMessage = mConst.concat("From: " + in[0].toString());
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
 		}
@@ -276,7 +276,8 @@ public class Server {
 			mOutput.println(mMessage);
 		}
 		else {
-			mMessage = mConst.concat("To: " + msg.getRecipients(RecipientType.TO).toString());
+			Address[] rec=msg.getRecipients(RecipientType.TO);
+			mMessage = mConst.concat("To: " + rec[0].toString());
 			System.out.println(mMessage);
 			mOutput.println(mMessage);
 		}
